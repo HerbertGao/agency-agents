@@ -28,7 +28,7 @@ separator_count="$(get_body "$OUTPUT_DIR/body-with-separator.md" | grep -cx -- '
   exit 1
 }
 
-for tool in gemini-cli opencode qwen; do
+for tool in gemini-cli opencode qwen pi; do
   "$SCRIPT_DIR/convert.sh" --tool "$tool" --out "$OUTPUT_DIR" >/dev/null
 done
 
@@ -55,6 +55,17 @@ assert_quoted \
 assert_quoted \
   "$OUTPUT_DIR/qwen/agents/programmatic-display-buyer.md" \
   tools
+assert_quoted \
+  "$OUTPUT_DIR/pi/agents/engineering-developer-tooling-engineer.md" \
+  description
+if grep -q '^tools:' "$OUTPUT_DIR/pi/agents/engineering-developer-tooling-engineer.md"; then
+  echo "Pi output leaked source-only tools frontmatter" >&2
+  exit 1
+fi
+if [[ "$(grep -c '^---$' "$OUTPUT_DIR/pi/agents/design-ux-architect.md")" -ne 4 ]]; then
+  echo "Pi output dropped persona body separators" >&2
+  exit 1
+fi
 
 # Qwen resolves tools by its own names and silently keeps one it does not know,
 # so Claude Code's Read/Write/Bash have to arrive as read_file/write_file/
