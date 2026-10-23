@@ -55,9 +55,12 @@ assert_quoted \
 assert_quoted \
   "$OUTPUT_DIR/qwen/agents/programmatic-display-buyer.md" \
   tools
-assert_quoted \
-  "$OUTPUT_DIR/pi/agents/engineering-developer-tooling-engineer.md" \
-  description
+pi_description="$(awk -v key=description '$0 ~ "^" key ":" { print; exit }' \
+  "$OUTPUT_DIR/pi/agents/engineering-developer-tooling-engineer.md")"
+case "$pi_description" in
+  "description: '"*"'"|"description: \""*"\"") ;;
+  *) printf 'Expected Pi description to keep a quoted scalar, got: %s\n' "$pi_description" >&2; exit 1 ;;
+esac
 PI_AGENT="$OUTPUT_DIR/pi/agents/engineering-code-reviewer.md"
 for line in "color: 'purple'" "emoji: '👁️'" "vibe: 'Reviews code like a mentor, not a gatekeeper. Every comment teaches something.'"; do
   grep -Fqx "$line" "$PI_AGENT" || { echo "Pi output dropped metadata: $line" >&2; exit 1; }
