@@ -310,6 +310,13 @@ convert_pi() {
   done
 
   tools="$(get_pi_field tools "$file")"
+  if [[ "$tools" == \'*\' ]]; then
+    tools="${tools#\'}"
+    tools="${tools%\'}"
+  elif [[ "$tools" == \"*\" ]]; then
+    tools="${tools#\"}"
+    tools="${tools%\"}"
+  fi
   if [[ -n "$tools" ]]; then
     IFS=',' read -ra tool_items <<< "$tools"
     for token in "${tool_items[@]}"; do
