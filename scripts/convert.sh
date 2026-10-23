@@ -266,7 +266,7 @@ get_pi_field() {
     frontmatter != 1 { next }
     found {
       if ($0 ~ /^[[:space:]]+/) {
-        line=$0; sub(/^[[:space:]]+/, "", line)
+        line=$0; sub(/^[[:space:]]+/, "", line); sub(/[[:space:]]+$/, "", line)
         value = value (value && line ? " " : "") line
         next
       }
@@ -277,6 +277,7 @@ get_pi_field() {
       field_name=parts[1]; gsub(/^[[:space:]]+|[[:space:]]+$/, "", field_name)
       if (field_name == key) {
         line=$0; sub(/^[^:]*:[[:space:]]*/, "", line)
+        sub(/[[:space:]]+$/, "", line)
         value=line; found=1
       }
     }
@@ -313,6 +314,7 @@ convert_pi() {
     IFS=',' read -ra tool_items <<< "$tools"
     for token in "${tool_items[@]}"; do
       token="$(printf '%s' "$token" | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')"
+      [[ -z "$token" ]] && continue
       case "$token" in
         Read) mapped_tool=read ;; Write) mapped_tool=write ;; Edit) mapped_tool=edit ;;
         Bash) mapped_tool=bash ;; Grep) mapped_tool=grep ;; Glob) mapped_tool=find ;;

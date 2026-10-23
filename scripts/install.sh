@@ -359,7 +359,7 @@ install_file() {
 # group, because a full install collides on 73 files, not zero.
 path_collision_group() {
   case "$1" in
-    claude-code|copilot|gemini-cli|opencode|qwen|zcode)
+    claude-code|copilot|gemini-cli|opencode|qwen|zcode|pi)
                                      printf 'agent-md' ;;       # <slug>.md, or the source's name
     antigravity|osaurus|dsh)         printf 'agency-skill' ;;   # agency-<slug>/SKILL.md
     *)                               printf '' ;;
